@@ -38,6 +38,7 @@ services:
       DATABASE_URL: postgresql://nat_user:nat_password@db:5432/nat_dev
       ENVIRONMENT: development
       PYTHONPATH: /app
+      ALLOWED_ORIGINS: http://localhost:3000
     depends_on:
       db:
         condition: service_healthy
@@ -62,8 +63,8 @@ services:
     ports:
       - "3000:3000"
     environment:
-      REACT_APP_API_URL: http://localhost:8000
-      REACT_APP_TENANT_ID: demo-tenant-1
+      REACT_APP_API_URL: http://localhost:8000/api/v1
+      REACT_APP_TENANT_ID: 550e8400-e29b-41d4-a716-446655440000
       CHOKIDAR_USEPOLLING: true
       WATCHPACK_POLLING: true
     depends_on:
