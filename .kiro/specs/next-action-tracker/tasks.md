@@ -8,31 +8,31 @@
   - Initialize Git repository with proper .gitignore files
   - _Requirements: 6.1, 6.2, 6.3, 6.4_
 
-- [ ] 2. Implement database schema and models
+- [x] 2. Implement database schema and models
 
-  - [ ] 2.1 Create PostgreSQL database schema
+  - [x] 2.1 Create PostgreSQL database schema
 
     - Write SQL migration scripts for tenants and opportunities tables
     - Create optimized indexes including idx_opportunities_tenant_due
     - Set up database connection and migration system
     - _Requirements: 4.2, 4.3_
 
-  - [ ] 2.2 Implement Pydantic data models
+  - [x] 2.2 Implement Pydantic data models
 
     - Create OpportunityBase, OpportunityCreate, OpportunityUpdate, and Opportunity models
     - Add tenant model and validation schemas
     - Implement proper datetime handling with timezone support
     - _Requirements: 1.1, 2.1, 3.1, 3.3_
 
-  - [ ] 2.3 Create database seed script
+  - [x] 2.3 Create database seed script
     - Write seed.py script to create demo tenants and opportunities
     - Include mix of due, future, and overdue actions for testing
     - Add data cleanup utilities for development
     - _Requirements: 1.1, 4.3_
 
-- [ ] 3. Build FastAPI backend with tenant isolation
+- [x] 3. Build FastAPI backend with tenant isolation
 
-  - [ ] 3.1 Set up FastAPI application structure
+  - [x] 3.1 Set up FastAPI application structure
 
     - Create main FastAPI app with proper middleware configuration
     - Implement tenant validation middleware for X-Tenant-ID header
@@ -40,7 +40,7 @@
     - Add structured logging configuration
     - _Requirements: 4.1, 4.4, 4.5_
 
-  - [ ] 3.2 Implement GET /api/v1/opportunities/due endpoint
+  - [x] 3.2 Implement GET /api/v1/opportunities/due endpoint
 
     - Create route handler with tenant filtering
     - Implement optimized SQL query for due actions
@@ -48,7 +48,7 @@
     - Include response serialization with Pydantic models
     - _Requirements: 1.1, 1.2, 1.3, 1.5_
 
-  - [ ] 3.3 Implement POST /api/v1/opportunities/{id}/complete_action endpoint
+  - [x] 3.3 Implement POST /api/v1/opportunities/{id}/complete_action endpoint
 
     - Create route handler for action completion workflow
     - Implement atomic database transaction for updates
