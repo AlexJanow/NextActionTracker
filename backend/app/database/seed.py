@@ -51,88 +51,82 @@ async def seed_tenants(connection: asyncpg.Connection) -> List[Dict[str, Any]]:
 
 
 async def seed_opportunities(connection: asyncpg.Connection) -> List[Dict[str, Any]]:
-    """Seed demo opportunities with mix of due, future, and overdue actions."""
+    """Seed demo opportunities with varied urgency levels for compelling demo."""
     logger.info("Seeding opportunities...")
     
     now = datetime.now(timezone.utc)
     
     opportunities = [
-        # Overdue actions (should appear first in dashboard)
+        # High urgency: 7 days overdue (red indicator)
         {
             'id': uuid4(),
             'tenant_id': DEMO_TENANT_ID,
-            'name': 'Acme Corp Enterprise Deal',
-            'value': 75000,
+            'name': 'Enterprise Deal - Acme Corp',
+            'value': 50000,
             'stage': 'Proposal',
-            'next_action_at': now - timedelta(days=3),
-            'next_action_details': 'Follow up on proposal feedback and address technical concerns',
-            'last_activity_at': now - timedelta(days=5),
+            'next_action_at': now - timedelta(days=7),
+            'next_action_details': 'Follow up on proposal feedback',
+            'last_activity_at': now - timedelta(days=8),
         },
+        
+        # Medium urgency: 2 days overdue (yellow indicator)
         {
             'id': uuid4(),
             'tenant_id': DEMO_TENANT_ID,
-            'name': 'Small Business Package - Local Bakery',
+            'name': 'Mid-Market - TechStart Inc',
+            'value': 25000,
+            'stage': 'Negotiation',
+            'next_action_at': now - timedelta(days=2),
+            'next_action_details': 'Send revised pricing',
+            'last_activity_at': now - timedelta(days=3),
+        },
+        
+        # Low urgency: Due today (blue indicator)
+        {
+            'id': uuid4(),
+            'tenant_id': DEMO_TENANT_ID,
+            'name': 'SMB Deal - Local Business',
             'value': 5000,
-            'stage': 'Qualified',
+            'stage': 'Discovery',
+            'next_action_at': now,
+            'next_action_details': 'Schedule demo call',
+            'last_activity_at': now - timedelta(hours=6),
+        },
+        
+        # For demo completion workflow: 1 day overdue
+        {
+            'id': uuid4(),
+            'tenant_id': DEMO_TENANT_ID,
+            'name': 'Renewal - Existing Customer',
+            'value': 15000,
+            'stage': 'Closed Won',
             'next_action_at': now - timedelta(days=1),
-            'next_action_details': 'Send customized pricing proposal with payment terms',
+            'next_action_details': 'Send renewal contract',
             'last_activity_at': now - timedelta(days=2),
         },
         
-        # Due today (critical actions)
+        # Future action: 3 days in future (should NOT appear on dashboard)
         {
             'id': uuid4(),
             'tenant_id': DEMO_TENANT_ID,
-            'name': 'TechStart Partnership',
-            'value': 25000,
-            'stage': 'Discovery',
-            'next_action_at': now,
-            'next_action_details': 'Schedule technical demo with their engineering team',
-            'last_activity_at': now - timedelta(hours=6),
+            'name': 'Future Opportunity',
+            'value': 30000,
+            'stage': 'Qualification',
+            'next_action_at': now + timedelta(days=3),
+            'next_action_details': 'Initial discovery call',
+            'last_activity_at': now - timedelta(hours=2),
         },
+        
+        # Additional opportunity for variety
         {
             'id': uuid4(),
             'tenant_id': DEMO_TENANT_ID,
             'name': 'Healthcare Solutions Inc',
             'value': 120000,
             'stage': 'Negotiation',
-            'next_action_at': now,
+            'next_action_at': now - timedelta(days=5),
             'next_action_details': 'Review contract terms and prepare counter-proposal',
-            'last_activity_at': now - timedelta(hours=12),
-        },
-        
-        # Future actions (should not appear in due dashboard)
-        {
-            'id': uuid4(),
-            'tenant_id': DEMO_TENANT_ID,
-            'name': 'Enterprise Solutions - MegaCorp',
-            'value': 200000,
-            'stage': 'Negotiation',
-            'next_action_at': now + timedelta(days=2),
-            'next_action_details': 'Present final proposal to executive committee',
-            'last_activity_at': now - timedelta(hours=2),
-        },
-        {
-            'id': uuid4(),
-            'tenant_id': DEMO_TENANT_ID,
-            'name': 'Startup Accelerator Program',
-            'value': 15000,
-            'stage': 'Prospecting',
-            'next_action_at': now + timedelta(days=7),
-            'next_action_details': 'Research their portfolio companies and prepare outreach',
-            'last_activity_at': now - timedelta(days=1),
-        },
-        
-        # Opportunities without next actions (stagnant deals)
-        {
-            'id': uuid4(),
-            'tenant_id': DEMO_TENANT_ID,
-            'name': 'Stagnant Deal - No Next Action',
-            'value': 30000,
-            'stage': 'Qualified',
-            'next_action_at': None,
-            'next_action_details': None,
-            'last_activity_at': now - timedelta(days=14),
+            'last_activity_at': now - timedelta(days=6),
         },
         
         # Second tenant data (for testing tenant isolation)
