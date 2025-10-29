@@ -79,8 +79,16 @@ const CompleteActionModal: React.FC<CompleteActionModalProps> = ({
 
     if (!newActionDate) {
       newErrors.date = 'Please select a date for the next action';
-    } else if (newActionDate < new Date()) {
-      newErrors.date = 'Next action date cannot be in the past';
+    } else {
+      // Validate that the date is today or in the future
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const selectedDate = new Date(newActionDate);
+      selectedDate.setHours(0, 0, 0, 0);
+      
+      if (selectedDate < today) {
+        newErrors.date = 'Next action date must be today or in the future';
+      }
     }
 
     if (!newActionDetails.trim()) {
