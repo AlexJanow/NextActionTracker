@@ -31,6 +31,29 @@ const CompleteActionModal: React.FC<CompleteActionModalProps> = ({
     setNewActionDate(tomorrow);
   }, []);
 
+  const handleQuickSelect = (interval: 'week' | '2weeks' | 'month') => {
+    const today = new Date();
+    let futureDate: Date;
+
+    switch (interval) {
+      case 'week':
+        futureDate = new Date(today);
+        futureDate.setDate(today.getDate() + 7);
+        break;
+      case '2weeks':
+        futureDate = new Date(today);
+        futureDate.setDate(today.getDate() + 14);
+        break;
+      case 'month':
+        futureDate = new Date(today);
+        futureDate.setMonth(today.getMonth() + 1);
+        break;
+    }
+
+    setNewActionDate(futureDate);
+    setTouched(prev => ({ ...prev, date: true }));
+  };
+
   const mutation = useMutation({
     mutationFn: (data: CompleteActionRequest) =>
       opportunitiesApi.completeAction(opportunity.id, data),
@@ -129,6 +152,63 @@ const CompleteActionModal: React.FC<CompleteActionModalProps> = ({
               placeholderText="Select a date"
               className={errors.date && touched.date ? 'field-error' : ''}
             />
+            
+            {/* Quick-select buttons */}
+            <div style={{ 
+              display: 'flex', 
+              gap: '8px', 
+              marginTop: '10px' 
+            }}>
+              <button
+                type="button"
+                onClick={() => handleQuickSelect('week')}
+                className="btn"
+                style={{
+                  flex: 1,
+                  padding: '8px 12px',
+                  fontSize: '14px',
+                  backgroundColor: '#ecf0f1',
+                  color: '#2c3e50',
+                  border: '1px solid #bdc3c7',
+                }}
+                disabled={mutation.isPending}
+              >
+                +1 Week
+              </button>
+              <button
+                type="button"
+                onClick={() => handleQuickSelect('2weeks')}
+                className="btn"
+                style={{
+                  flex: 1,
+                  padding: '8px 12px',
+                  fontSize: '14px',
+                  backgroundColor: '#ecf0f1',
+                  color: '#2c3e50',
+                  border: '1px solid #bdc3c7',
+                }}
+                disabled={mutation.isPending}
+              >
+                +2 Weeks
+              </button>
+              <button
+                type="button"
+                onClick={() => handleQuickSelect('month')}
+                className="btn"
+                style={{
+                  flex: 1,
+                  padding: '8px 12px',
+                  fontSize: '14px',
+                  backgroundColor: '#ecf0f1',
+                  color: '#2c3e50',
+                  border: '1px solid #bdc3c7',
+                }}
+                disabled={mutation.isPending}
+              >
+                +1 Month
+              </button>
+            </div>
+            
             <FieldError error={errors.date} touched={touched.date} />
           </div>
 
