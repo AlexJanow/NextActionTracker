@@ -2,7 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import DatePicker from 'react-datepicker';
 
-import { opportunitiesApi, Opportunity, CompleteActionRequest } from '../services/api';
+import { opportunitiesApi, Opportunity, CompleteActionRequest, ApiError } from '../services/api';
+import { useToast } from '../contexts/ToastContext';
+import FieldError from './FieldError';
 import 'react-datepicker/dist/react-datepicker.css';
 
 interface CompleteActionModalProps {
@@ -19,6 +21,8 @@ const CompleteActionModal: React.FC<CompleteActionModalProps> = ({
   const [newActionDate, setNewActionDate] = useState<Date | null>(null);
   const [newActionDetails, setNewActionDetails] = useState('');
   const [errors, setErrors] = useState<{ date?: string; details?: string }>({});
+  const [touched, setTouched] = useState<{ date?: boolean; details?: boolean }>({});
+  const { showError } = useToast();
 
   // Set default date to tomorrow
   useEffect(() => {
@@ -33,8 +37,17 @@ const CompleteActionModal: React.FC<CompleteActionModalProps> = ({
     onSuccess: () => {
       onActionCompleted();
     },
-    onError: (error: any) => {
+    onError: (error: ApiError) => {
       console.error('Failed to complete action:', error);
+      
+      // Show specific error message based on error type
+      if (error.status === 422) {
+        showError('Please check your input and try again');
+      } else if (error.status === 404) {
+        showError('This opportunity could not be found');
+      } else {
+        showError(error.message || 'Failed to complete action. Please try again.');
+      }
     },
   });
 
@@ -106,13 +119,17 @@ const CompleteActionModal: React.FC<CompleteActionModalProps> = ({
             <DatePicker
               id="nextActionDate"
               selected={newActionDate}
-              onChange={(date: Date | null) => setNewActionDate(date)}
+              onChange={(date: Date | null) => {
+                setNewActionDate(date);
+                setTouched(prev => ({ ...prev, date: true }));
+              }}
+              onBlur={() => setTouched(prev => ({ ...prev, date: true }))}
               dateFormat="MMMM d, yyyy"
               minDate={new Date()}
               placeholderText="Select a date"
-              className={errors.date ? 'error' : ''}
+              className={errors.date && touched.date ? 'field-error' : ''}
             />
-            {errors.date && <div className="form-error">{errors.date}</div>}
+            <FieldError error={errors.date} touched={touched.date} />
           </div>
 
           <div className="form-group">
@@ -122,14 +139,15 @@ const CompleteActionModal: React.FC<CompleteActionModalProps> = ({
             <textarea
               id="nextActionDetails"
               value={newActionDetails}
-              onChange={(e) => setNewActionDetails(e.target.value)}
-              placeholder="e.g., Send customized proposal, Schedule demo call, Follow up on pricing questions..."
-              className={errors.details ? 'error' : ''}
-              style={{
-                border: errors.details ? '2px solid #e74c3c' : undefined,
+              onChange={(e) => {
+                setNewActionDetails(e.target.value);
+                setTouched(prev => ({ ...prev, details: true }));
               }}
+              onBlur={() => setTouched(prev => ({ ...prev, details: true }))}
+              placeholder="e.g., Send customized proposal, Schedule demo call, Follow up on pricing questions..."
+              className={errors.details && touched.details ? 'field-error' : ''}
             />
-            {errors.details && <div className="form-error">{errors.details}</div>}
+            <FieldError error={errors.details} touched={touched.details} />
           </div>
 
           <div className="flex justify-between gap-10">
