@@ -21,6 +21,21 @@ const DueActionCard: React.FC<DueActionCardProps> = ({
     }).format(value);
   };
 
+  const getUrgencyColor = (nextActionAt: string): string => {
+    const actionDate = new Date(nextActionAt);
+    const today = new Date();
+    
+    // Reset time to midnight for accurate day comparison
+    today.setHours(0, 0, 0, 0);
+    actionDate.setHours(0, 0, 0, 0);
+    
+    const daysOverdue = Math.floor((today.getTime() - actionDate.getTime()) / (1000 * 60 * 60 * 24));
+    
+    if (daysOverdue > 3) return '#ef4444'; // red - high urgency
+    if (daysOverdue >= 1) return '#eab308'; // yellow - medium urgency
+    return '#3b82f6'; // blue - due today
+  };
+
   const formatDueDate = (dateString: string): { text: string; isOverdue: boolean } => {
     const date = parseISO(dateString);
     const isOverdue = isPast(date) && !isToday(date);
@@ -39,9 +54,10 @@ const DueActionCard: React.FC<DueActionCardProps> = ({
   };
 
   const dueInfo = formatDueDate(opportunity.next_action_at);
+  const urgencyColor = getUrgencyColor(opportunity.next_action_at);
 
   return (
-    <div className="card">
+    <div className="card" style={{ borderLeft: `4px solid ${urgencyColor}` }}>
       <div className="flex justify-between align-center">
         <div style={{ flex: 1 }}>
           {/* Opportunity header */}
