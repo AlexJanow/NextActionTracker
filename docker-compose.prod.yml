@@ -1,0 +1,36 @@
+# Production configuration for docker-compose
+# Usage: docker-compose -f docker-compose.yml -f docker-compose.prod.yml up
+
+version: '3.8'
+
+services:
+  db:
+    environment:
+      POSTGRES_DB: nat_prod
+      POSTGRES_USER: ${DB_USER:-nat_user}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - postgres_prod_data:/var/lib/postgresql/data
+    ports: []  # Don't expose database port in production
+
+  backend:
+    environment:
+      DATABASE_URL: postgresql://${DB_USER:-nat_user}:${DB_PASSWORD}@db:5432/nat_prod
+      ENVIRONMENT: production
+      DEBUG: false
+      LOG_LEVEL: info
+    volumes: []  # No source code mounting in production
+    command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "4"]
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.prod
+    environment:
+      NODE_ENV: production
+      REACT_APP_API_URL: ${API_URL:-http://localhost:8000}
+      REACT_APP_TENANT_ID: ${TENANT_ID}
+    volumes: []  # No source code mounting in production
+
+volumes:
+  postgres_prod_data:

@@ -1,6 +1,13 @@
+version: '3.8'
+
+networks:
+  nat-network:
+    driver: bridge
+
 services:
   db:
     image: postgres:15
+    container_name: nat-db
     environment:
       POSTGRES_DB: nat_dev
       POSTGRES_USER: nat_user
@@ -10,42 +17,76 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - nat-network
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U nat_user -d nat_dev"]
       interval: 10s
       timeout: 5s
       retries: 5
+      start_period: 30s
+    restart: unless-stopped
 
   backend:
-    build: ./backend
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: nat-backend
     ports:
       - "8000:8000"
     environment:
       DATABASE_URL: postgresql://nat_user:nat_password@db:5432/nat_dev
       ENVIRONMENT: development
+      PYTHONPATH: /app
     depends_on:
       db:
         condition: service_healthy
     volumes:
       - ./backend:/app
+      - backend_cache:/app/__pycache__
+    networks:
+      - nat-network
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
       interval: 30s
       timeout: 10s
       retries: 3
+      start_period: 60s
+    restart: unless-stopped
 
   frontend:
-    build: ./frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: nat-frontend
     ports:
       - "3000:3000"
     environment:
       REACT_APP_API_URL: http://localhost:8000
       REACT_APP_TENANT_ID: demo-tenant-1
+      CHOKIDAR_USEPOLLING: true
+      WATCHPACK_POLLING: true
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
     volumes:
       - ./frontend:/app
       - /app/node_modules
+      - frontend_cache:/app/.cache
+    networks:
+      - nat-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 90s
+    restart: unless-stopped
 
 volumes:
   postgres_data:
+    driver: local
+  backend_cache:
+    driver: local
+  frontend_cache:
+    driver: local
