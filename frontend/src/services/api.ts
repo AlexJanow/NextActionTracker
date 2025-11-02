@@ -129,4 +129,14 @@ export const opportunitiesApi = {
   },
 };
 
+// Demo control API functions
+export const demoApi = {
+  // Reset demo data to initial seed state
+  resetDemoData: async (): Promise<void> => {
+    return retryRequest(async () => {
+      await api.post('/demo/reset');
+    });
+  },
+};
+
 export default api;

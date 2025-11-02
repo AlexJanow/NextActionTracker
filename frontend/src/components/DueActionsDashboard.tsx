@@ -6,6 +6,7 @@ import DueActionCard from './DueActionCard';
 import CompleteActionModal from './CompleteActionModal';
 import ErrorBoundary from './ErrorBoundary';
 import LoadingSkeleton from './LoadingSkeleton';
+import DemoControlPanel from './DemoControlPanel';
 
 const DueActionsDashboard: React.FC = () => {
   const [selectedOpportunity, setSelectedOpportunity] = useState<Opportunity | null>(null);
@@ -130,6 +131,9 @@ const DueActionsDashboard: React.FC = () => {
             onActionCompleted={handleActionCompleted}
           />
         )}
+
+        {/* Demo control panel */}
+        <DemoControlPanel />
       </div>
     </ErrorBoundary>
   );
