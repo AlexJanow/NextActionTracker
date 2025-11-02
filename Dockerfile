@@ -39,11 +39,13 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-# Install runtime dependencies
+# Install runtime dependencies including PostgreSQL
 RUN apt-get update && apt-get install -y \
     curl \
     nginx \
     supervisor \
+    postgresql-15 \
+    postgresql-contrib-15 \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy Python dependencies from backend-setup
@@ -62,18 +64,36 @@ COPY nginx.conf /etc/nginx/nginx.conf
 # Copy supervisor configuration
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
+# Copy database init script and startup script
+COPY database/init.sql /docker-entrypoint-initdb.d/init.sql
+COPY start_postgres.sh /usr/local/bin/start_postgres.sh
+RUN chmod +x /usr/local/bin/start_postgres.sh
+
 # Create directories and set permissions
-RUN mkdir -p /var/log/supervisor /var/log/nginx /var/run \
+RUN mkdir -p /var/log/supervisor /var/log/nginx /var/run /var/lib/postgresql/data \
     && useradd --create-home --shell /bin/bash app \
     && chown -R app:app /app/backend \
     && chown -R www-data:www-data /usr/share/nginx/html \
     && chown -R www-data:www-data /var/log/nginx \
     && chown -R www-data:www-data /etc/nginx \
-    && chown -R root:root /var/log/supervisor
+    && chown -R root:root /var/log/supervisor \
+    && chown -R postgres:postgres /var/lib/postgresql/data \
+    && chmod 700 /var/lib/postgresql/data
 
 # Set Python path
 ENV PYTHONPATH=/app/backend
 ENV PATH="/usr/local/bin:${PATH}"
+
+# PostgreSQL environment variables
+ENV POSTGRES_USER=nat_user
+ENV POSTGRES_PASSWORD=nat_password
+ENV POSTGRES_DB=nat_dev
+ENV PGDATA=/var/lib/postgresql/data/pgdata
+
+# Default DATABASE_URL (can be overridden)
+ENV DATABASE_URL=postgresql://nat_user:nat_password@localhost:5432/nat_dev
+
+# Note: PostgreSQL will be initialized at runtime by start_postgres.sh
 
 # Expose port 80 (nginx)
 EXPOSE 80

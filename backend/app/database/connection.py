@@ -3,6 +3,7 @@
 import os
 import time
 from typing import AsyncGenerator
+from urllib.parse import urlparse, parse_qs
 import asyncpg
 from asyncpg import Pool
 import structlog
@@ -14,12 +15,51 @@ logger = structlog.get_logger(__name__)
 _pool: Pool = None
 
 
+def normalize_database_url(url: str) -> str:
+    """Normalize database URL to format asyncpg expects.
+    
+    Handles:
+    - postgres:// -> postgresql://
+    - Malformed URLs from cloud providers
+    - Ensures proper format for asyncpg
+    """
+    if not url:
+        return url
+    
+    # Convert postgres:// to postgresql:// (asyncpg prefers postgresql://)
+    if url.startswith('postgres://'):
+        url = url.replace('postgres://', 'postgresql://', 1)
+    
+    # Ensure it starts with postgresql://
+    if not url.startswith('postgresql://'):
+        logger.warning("Database URL does not start with postgresql://", url_prefix=url[:20])
+        return url
+    
+    # Try to parse and validate the URL structure
+    try:
+        parsed = urlparse(url)
+        # If parsing works, reconstruct to ensure proper format
+        # This helps catch malformed URLs early
+        if not parsed.netloc:
+            logger.error("Database URL has no netloc", url_preview=url[:50])
+            return url
+    except Exception as e:
+        logger.warning("Could not parse database URL, using as-is", error=str(e), url_preview=url[:50])
+    
+    return url
+
+
 async def get_database_pool() -> Pool:
     """Get or create the database connection pool with optimized settings."""
     global _pool
     
     if _pool is None:
         database_url = os.getenv("DATABASE_URL", "postgresql://postgres:postgres@localhost:5432/nat_dev")
+        
+        # Normalize the URL for asyncpg
+        database_url = normalize_database_url(database_url)
+        
+        logger.info("Connecting to database", url_preview=database_url.split('@')[0] if '@' in database_url else 'hidden')
         
         try:
             _pool = await asyncpg.create_pool(
