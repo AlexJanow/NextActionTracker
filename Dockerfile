@@ -40,8 +40,20 @@ FROM python:3.11-slim
 WORKDIR /app
 
 # Install runtime dependencies including PostgreSQL
+# First, add PostgreSQL official APT repository for PostgreSQL 15
 RUN apt-get update && apt-get install -y \
     curl \
+    ca-certificates \
+    gnupg \
+    lsb-release \
+    && rm -rf /var/lib/apt/lists/*
+
+# Add PostgreSQL GPG key and repository
+RUN curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor -o /usr/share/keyrings/postgresql-keyring.gpg \
+    && echo "deb [signed-by=/usr/share/keyrings/postgresql-keyring.gpg] http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list
+
+# Install PostgreSQL 15 and other dependencies
+RUN apt-get update && apt-get install -y \
     nginx \
     supervisor \
     postgresql-15 \
