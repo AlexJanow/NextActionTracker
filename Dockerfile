@@ -82,7 +82,7 @@ COPY start_postgres.sh /usr/local/bin/start_postgres.sh
 RUN chmod +x /usr/local/bin/start_postgres.sh
 
 # Create directories and set permissions
-RUN mkdir -p /var/log/supervisor /var/log/nginx /var/run /var/lib/postgresql/data \
+RUN mkdir -p /var/log/supervisor /var/log/nginx /var/run /var/lib/postgresql/data /root/.postgresql \
     && useradd --create-home --shell /bin/bash app \
     && chown -R app:app /app/backend \
     && chown -R www-data:www-data /usr/share/nginx/html \
@@ -90,7 +90,8 @@ RUN mkdir -p /var/log/supervisor /var/log/nginx /var/run /var/lib/postgresql/dat
     && chown -R www-data:www-data /etc/nginx \
     && chown -R root:root /var/log/supervisor \
     && chown -R postgres:postgres /var/lib/postgresql/data \
-    && chmod 700 /var/lib/postgresql/data
+    && chmod 700 /var/lib/postgresql/data \
+    && chmod 755 /root/.postgresql
 
 # Set Python path
 ENV PYTHONPATH=/app/backend

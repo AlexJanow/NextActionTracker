@@ -62,6 +62,11 @@ async def get_database_pool() -> Pool:
         logger.info("Connecting to database", url_preview=database_url.split('@')[0] if '@' in database_url else 'hidden')
         
         try:
+            # Ensure SSL is disabled in URL if not already specified
+            if '?ssl=' not in database_url and '?sslmode=' not in database_url:
+                separator = '&' if '?' in database_url else '?'
+                database_url = f"{database_url}{separator}sslmode=disable"
+            
             _pool = await asyncpg.create_pool(
                 database_url,
                 min_size=2,  # Increased minimum connections
