@@ -27,19 +27,23 @@ const RETRY_DELAY = 1000; // 1 second base delay
 
 // Create axios instance with base configuration
 // In production (same container), use relative URL for nginx proxy
-// In development, use absolute URL or fallback
+// Environment variables are embedded at build time in React apps
 const getApiBaseURL = () => {
   const envUrl = process.env.REACT_APP_API_URL;
-  if (envUrl) {
-    // If absolute URL is provided (development), use it
-    if (envUrl.startsWith('http://') || envUrl.startsWith('https://')) {
-      return envUrl;
-    }
-    // Otherwise use relative URL (production)
+  
+  // If explicit absolute URL is provided (development), use it
+  if (envUrl && (envUrl.startsWith('http://') || envUrl.startsWith('https://'))) {
     return envUrl;
   }
-  // Fallback: development mode uses absolute, production uses relative
-  return process.env.NODE_ENV === 'production' ? '/api/v1' : 'http://localhost:8000/api/v1';
+  
+  // If relative URL is provided, use it
+  if (envUrl && !envUrl.startsWith('http')) {
+    return envUrl;
+  }
+  
+  // Fallback: Always use relative URL in production builds
+  // This ensures the nginx proxy works correctly
+  return '/api/v1';
 };
 
 const api = axios.create({
