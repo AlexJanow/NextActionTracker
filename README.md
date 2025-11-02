@@ -66,7 +66,7 @@ graph TB
         RQ[React Query]
         UI --> RQ
     end
-    
+
     subgraph "Backend Layer"
         API[FastAPI]
         MW[Tenant Middleware]
@@ -74,16 +74,16 @@ graph TB
         API --> MW
         MW --> BL
     end
-    
+
     subgraph "Data Layer"
         DB[(PostgreSQL)]
         IDX[Optimized Indexes]
         DB --> IDX
     end
-    
+
     RQ --> API
     BL --> DB
-    
+
     style UI fill:#e1f5fe
     style API fill:#f3e5f5
     style DB fill:#e8f5e8
@@ -91,14 +91,14 @@ graph TB
 
 ### Technology Stack
 
-| Layer | Technology | Purpose |
-|-------|------------|---------|
-| **Frontend** | React 18+ with TypeScript | Modern, type-safe UI development |
-| **State Management** | React Query | Server state caching and synchronization |
-| **Backend** | FastAPI with Python 3.11+ | High-performance async API |
-| **Validation** | Pydantic | Type-safe data validation |
-| **Database** | PostgreSQL 15+ | Reliable ACID transactions with timezone support |
-| **Containerization** | Docker Compose | Consistent development environment |
+| Layer                | Technology                | Purpose                                          |
+| -------------------- | ------------------------- | ------------------------------------------------ |
+| **Frontend**         | React 18+ with TypeScript | Modern, type-safe UI development                 |
+| **State Management** | React Query               | Server state caching and synchronization         |
+| **Backend**          | FastAPI with Python 3.11+ | High-performance async API                       |
+| **Validation**       | Pydantic                  | Type-safe data validation                        |
+| **Database**         | PostgreSQL 15+            | Reliable ACID transactions with timezone support |
+| **Containerization** | Docker Compose            | Consistent development environment               |
 
 ## Quick Start
 
@@ -205,6 +205,7 @@ X-Tenant-ID: demo-tenant-1
 ```
 
 **Response:**
+
 ```json
 [
   {
@@ -232,6 +233,7 @@ Content-Type: application/json
 ```
 
 **Response:**
+
 ```json
 {
   "message": "Action completed successfully",
@@ -322,6 +324,7 @@ next-action-tracker/
 ### Example Scenarios
 
 #### Scenario 1: Follow-up Call Due
+
 ```
 Opportunity: "Enterprise Software Deal - $75,000"
 Current Action: "Follow up on technical questions"
@@ -332,6 +335,7 @@ Next Action: "Send technical documentation" (Due: Tomorrow 2 PM)
 ```
 
 #### Scenario 2: Proposal Feedback
+
 ```
 Opportunity: "Marketing Agency Contract - $25,000"
 Current Action: "Review proposal feedback"
@@ -348,17 +352,20 @@ Next Action: "Schedule call to address pricing concerns" (Due: Friday 10 AM)
 The application implements **application-level multi-tenancy** with the following characteristics:
 
 #### ✅ Current Implementation (Light Isolation)
+
 - **Header-based identification**: `X-Tenant-ID` required on all requests
 - **Query-level filtering**: All database queries include `WHERE tenant_id = ?`
 - **Middleware validation**: Automatic tenant ID validation and injection
 - **Demo-friendly**: Simple setup for development and testing
 
 #### ⚠️ Security Considerations
+
 - **IDOR vulnerability**: Malicious users could potentially access other tenant data by manipulating headers
 - **No authentication**: Current implementation assumes trusted environment
 - **Suitable for**: Internal tools, demos, proof-of-concepts
 
 #### 🔒 Production Recommendations
+
 - **JWT-based authentication** with tenant claims
 - **PostgreSQL Row-Level Security (RLS)** for database-level isolation
 - **API Gateway** with tenant routing
@@ -384,6 +391,7 @@ async def validate_tenant(request: Request):
 ### Current Design Decisions
 
 #### ✅ Strengths
+
 - **Simplicity**: Minimal cognitive load for users
 - **Focus**: Single-purpose tool prevents feature creep
 - **Performance**: Optimized queries with targeted indexes
@@ -391,6 +399,7 @@ async def validate_tenant(request: Request):
 - **Type Safety**: Full TypeScript and Pydantic validation
 
 #### ⚠️ Trade-offs Made
+
 - **No pagination**: `/due` endpoint loads all due actions (acceptable for <1000 opportunities)
 - **Light security**: Demo-suitable tenant isolation (not production-ready)
 - **No offline support**: Requires network connectivity
@@ -398,6 +407,7 @@ async def validate_tenant(request: Request):
 - **No bulk operations**: Actions must be completed individually
 
 #### 🚧 Known Limitations
+
 - **Scalability ceiling**: Current architecture suitable for <10,000 opportunities per tenant
 - **Time zone complexity**: All times stored in UTC, display logic in frontend
 - **No action history**: Previous actions not tracked (by design for simplicity)
@@ -405,16 +415,17 @@ async def validate_tenant(request: Request):
 
 ### Performance Characteristics
 
-| Metric | Current Performance | Scaling Limit |
-|--------|-------------------|---------------|
-| **Due actions query** | <50ms (100 opportunities) | ~500ms (1000 opportunities) |
-| **Action completion** | <100ms | N/A (single record update) |
-| **Dashboard load** | <200ms total | Depends on opportunity count |
-| **Concurrent users** | 50+ per tenant | Limited by database connections |
+| Metric                | Current Performance       | Scaling Limit                   |
+| --------------------- | ------------------------- | ------------------------------- |
+| **Due actions query** | <50ms (100 opportunities) | ~500ms (1000 opportunities)     |
+| **Action completion** | <100ms                    | N/A (single record update)      |
+| **Dashboard load**    | <200ms total              | Depends on opportunity count    |
+| **Concurrent users**  | 50+ per tenant            | Limited by database connections |
 
 ## Next Steps
 
 ### Immediate Improvements (Next Sprint)
+
 - [ ] **Pagination**: Add cursor-based pagination for due actions
 - [ ] **Action history**: Track completed actions for audit trail
 - [ ] **Bulk operations**: Allow completing multiple actions at once
@@ -422,6 +433,7 @@ async def validate_tenant(request: Request):
 - [ ] **Performance monitoring**: Add metrics and alerting
 
 ### Medium-term Enhancements (Next Quarter)
+
 - [ ] **Authentication system**: JWT-based user authentication
 - [ ] **Role-based access**: Manager vs. sales rep permissions
 - [ ] **Notification system**: Email/SMS reminders for overdue actions
@@ -429,6 +441,7 @@ async def validate_tenant(request: Request):
 - [ ] **Integration APIs**: Webhook support for external CRM systems
 
 ### Long-term Vision (6+ Months)
+
 - [ ] **AI-powered suggestions**: Smart next action recommendations
 - [ ] **Advanced workflows**: Multi-step action sequences
 - [ ] **Team collaboration**: Shared opportunities and handoffs
@@ -436,6 +449,7 @@ async def validate_tenant(request: Request):
 - [ ] **Multi-channel support**: Slack/Teams integration
 
 ### Production Readiness Checklist
+
 - [ ] **Security audit**: Implement proper authentication and authorization
 - [ ] **Load testing**: Validate performance under realistic load
 - [ ] **Monitoring setup**: Application and infrastructure monitoring

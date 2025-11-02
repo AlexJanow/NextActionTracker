@@ -31,9 +31,9 @@ const DueActionCard: React.FC<DueActionCardProps> = ({
     
     const daysOverdue = Math.floor((today.getTime() - actionDate.getTime()) / (1000 * 60 * 60 * 24));
     
-    if (daysOverdue > 3) return '#ef4444'; // red - high urgency
-    if (daysOverdue >= 1) return '#eab308'; // yellow - medium urgency
-    return '#3b82f6'; // blue - due today
+    if (daysOverdue > 3) return 'var(--overdue-red)'; // red - high urgency
+    if (daysOverdue >= 1) return 'var(--medium-urgency-yellow)'; // yellow - medium urgency
+    return 'var(--today-blue)'; // blue - due today
   };
 
   const formatDueDate = (dateString: string): { text: string; isOverdue: boolean } => {
@@ -62,23 +62,11 @@ const DueActionCard: React.FC<DueActionCardProps> = ({
         <div style={{ flex: 1 }}>
           {/* Opportunity header */}
           <div className="flex align-center gap-10" style={{ marginBottom: '12px' }}>
-            <h3 style={{ 
-              fontSize: '1.2rem', 
-              fontWeight: '600', 
-              color: '#2c3e50',
-              margin: 0 
-            }}>
+            <h3 className="action-card-title">
               {opportunity.name}
             </h3>
             {dueInfo.isOverdue && (
-              <span style={{
-                backgroundColor: '#e74c3c',
-                color: 'white',
-                padding: '2px 8px',
-                borderRadius: '12px',
-                fontSize: '12px',
-                fontWeight: '500'
-              }}>
+              <span className="overdue-badge">
                 OVERDUE
               </span>
             )}
@@ -87,14 +75,14 @@ const DueActionCard: React.FC<DueActionCardProps> = ({
           {/* Opportunity details */}
           <div className="flex gap-10" style={{ marginBottom: '12px' }}>
             <div>
-              <span style={{ color: '#7f8c8d', fontSize: '14px' }}>Value: </span>
-              <span style={{ fontWeight: '500', color: '#2c3e50' }}>
+              <span className="action-label">Value: </span>
+              <span className="action-value">
                 {formatCurrency(opportunity.value)}
               </span>
             </div>
             <div>
-              <span style={{ color: '#7f8c8d', fontSize: '14px' }}>Stage: </span>
-              <span style={{ fontWeight: '500', color: '#2c3e50' }}>
+              <span className="action-label">Stage: </span>
+              <span className="action-value">
                 {opportunity.stage}
               </span>
             </div>
@@ -102,19 +90,16 @@ const DueActionCard: React.FC<DueActionCardProps> = ({
 
           {/* Due date */}
           <div style={{ marginBottom: '12px' }}>
-            <span style={{ color: '#7f8c8d', fontSize: '14px' }}>Due: </span>
-            <span style={{ 
-              fontWeight: '500', 
-              color: dueInfo.isOverdue ? '#e74c3c' : '#2c3e50' 
-            }}>
+            <span className="action-label">Due: </span>
+            <span className={dueInfo.isOverdue ? 'action-due-overdue' : 'action-due-normal'}>
               {dueInfo.text}
             </span>
           </div>
 
           {/* Next action details */}
           <div>
-            <span style={{ color: '#7f8c8d', fontSize: '14px' }}>Next Action: </span>
-            <span style={{ fontWeight: '500', color: '#2c3e50' }}>
+            <span className="action-label">Next Action: </span>
+            <span className="action-value">
               {opportunity.next_action_details || 'No details provided'}
             </span>
           </div>

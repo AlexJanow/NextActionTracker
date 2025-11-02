@@ -11,7 +11,7 @@ class TenantValidationMiddleware(BaseHTTPMiddleware):
     """Middleware to validate tenant ID in request headers."""
     
     # Paths that don't require tenant validation
-    EXEMPT_PATHS = {"/", "/health", "/docs", "/redoc", "/openapi.json"}
+    EXEMPT_PATHS = {"/", "/health", "/metrics", "/docs", "/redoc", "/openapi.json"}
     
     async def dispatch(self, request: Request, call_next):
         """Process request and validate tenant ID for protected endpoints."""

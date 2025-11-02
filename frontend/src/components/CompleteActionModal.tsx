@@ -129,9 +129,9 @@ const CompleteActionModal: React.FC<CompleteActionModalProps> = ({
       <div className="modal">
         <h2>Complete Action</h2>
         
-        <div style={{ marginBottom: '20px', padding: '15px', backgroundColor: '#f8f9fa', borderRadius: '6px' }}>
-          <h4 style={{ margin: '0 0 8px 0', color: '#2c3e50' }}>{opportunity.name}</h4>
-          <p style={{ margin: '0', color: '#7f8c8d', fontSize: '14px' }}>
+        <div className="modal-opportunity-info">
+          <h4 className="modal-opportunity-name">{opportunity.name}</h4>
+          <p className="modal-opportunity-details">
             Current action: {opportunity.next_action_details || 'No details'}
           </p>
         </div>
@@ -170,15 +170,7 @@ const CompleteActionModal: React.FC<CompleteActionModalProps> = ({
               <button
                 type="button"
                 onClick={() => handleQuickSelect('week')}
-                className="btn"
-                style={{
-                  flex: 1,
-                  padding: '8px 12px',
-                  fontSize: '14px',
-                  backgroundColor: '#ecf0f1',
-                  color: '#2c3e50',
-                  border: '1px solid #bdc3c7',
-                }}
+                className="btn quick-select-button"
                 disabled={mutation.isPending}
               >
                 +1 Week
@@ -186,15 +178,7 @@ const CompleteActionModal: React.FC<CompleteActionModalProps> = ({
               <button
                 type="button"
                 onClick={() => handleQuickSelect('2weeks')}
-                className="btn"
-                style={{
-                  flex: 1,
-                  padding: '8px 12px',
-                  fontSize: '14px',
-                  backgroundColor: '#ecf0f1',
-                  color: '#2c3e50',
-                  border: '1px solid #bdc3c7',
-                }}
+                className="btn quick-select-button"
                 disabled={mutation.isPending}
               >
                 +2 Weeks
@@ -202,15 +186,7 @@ const CompleteActionModal: React.FC<CompleteActionModalProps> = ({
               <button
                 type="button"
                 onClick={() => handleQuickSelect('month')}
-                className="btn"
-                style={{
-                  flex: 1,
-                  padding: '8px 12px',
-                  fontSize: '14px',
-                  backgroundColor: '#ecf0f1',
-                  color: '#2c3e50',
-                  border: '1px solid #bdc3c7',
-                }}
+                className="btn quick-select-button"
                 disabled={mutation.isPending}
               >
                 +1 Month
@@ -242,12 +218,7 @@ const CompleteActionModal: React.FC<CompleteActionModalProps> = ({
             <button
               type="button"
               onClick={onClose}
-              className="btn"
-              style={{
-                backgroundColor: '#95a5a6',
-                color: 'white',
-                flex: 1,
-              }}
+              className="btn btn-secondary"
               disabled={mutation.isPending}
             >
               Cancel

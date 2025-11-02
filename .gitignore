@@ -75,3 +75,14 @@ dmypy.json
 # Temporary files
 *.tmp
 *.temp
+
+# Planning files
+*.plan.md
+
+# Report files (generated/temporary analysis)
+*_REPORT.md
+*REPORT*.md
+
+# Recruiting/challenge documents
+*Challenge*.md
+*Recruiting*.md

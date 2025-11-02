@@ -1,4 +1,4 @@
-import axios, { AxiosError, AxiosRequestConfig } from 'axios';
+import axios, { AxiosError } from 'axios';
 
 // Types for API responses
 export interface Opportunity {
@@ -27,7 +27,7 @@ const RETRY_DELAY = 1000; // 1 second base delay
 
 // Create axios instance with base configuration
 const api = axios.create({
-  baseURL: '/api/v1',
+  baseURL: process.env.REACT_APP_API_URL || 'http://localhost:8000/api/v1',
   headers: {
     'Content-Type': 'application/json',
   },
@@ -35,7 +35,7 @@ const api = axios.create({
 });
 
 // Global tenant ID - in production this would come from context
-let globalTenantId = 'demo-tenant-123';
+let globalTenantId = process.env.REACT_APP_TENANT_ID || '550e8400-e29b-41d4-a716-446655440000';
 
 export const setTenantId = (tenantId: string) => {
   globalTenantId = tenantId;

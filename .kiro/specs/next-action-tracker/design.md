@@ -137,15 +137,31 @@ WHERE id = :opportunity_id AND tenant_id = :tenant_id;
 - **Empty State**: "All done! 🎉" when no due actions
 
 #### DueActionCard Component
-- **Props**: Opportunity data (id, name, value, stage, next_action_details)
+- **Props**: Opportunity data (id, name, value, stage, next_action_details, next_action_at)
 - **Actions**: "Complete Action" button that opens modal
 - **Display**: Formatted opportunity information with clear action details
+- **Visual Prioritization**: 
+  - Urgency calculation function: `getUrgencyColor(next_action_at: string): string`
+  - Color logic based on days overdue:
+    - `> 3 days`: red (#ef4444) - high urgency
+    - `1-3 days`: yellow (#eab308) - medium urgency
+    - `today`: blue (#3b82f6) - low urgency
+  - Visual indicator: colored left border (4px width) on card
 
 #### CompleteActionModal Component
 - **Form Fields**: 
-  - DatePicker for new action date (required)
+  - DatePicker for new action date (required, must be today or future)
   - TextArea for action description (required)
-- **Validation**: Client-side validation before submission
+- **Quick-Select Buttons**: 
+  - Three buttons: "+1 Week", "+2 Weeks", "+1 Month"
+  - Positioned directly below DatePicker
+  - Click handler: `handleQuickSelect(interval: 'week' | '2weeks' | 'month')`
+  - Automatically populates DatePicker with calculated future date
+- **Validation**: 
+  - Client-side validation before submission
+  - DatePicker min date set to today (prevents past date selection)
+  - Form validation: `new_next_action_at >= today`
+  - Error message: "Next action date must be today or in the future"
 - **Mutation**: Uses React Query `useMutation` for API call
 - **UX**: Disabled submit during loading, error display on failure
 
@@ -229,7 +245,13 @@ logger.info(
 - **E2E Tests**: Critical path testing with Playwright
 
 ### Test Data Strategy
-- **Seed Script**: Creates demo tenants and opportunities
+- **Seed Script**: Creates demo tenants and opportunities with varied urgency levels
+  - 1 opportunity: 7 days overdue (high urgency, red indicator)
+  - 1 opportunity: 2 days overdue (medium urgency, yellow indicator)
+  - 1 opportunity: due today (low urgency, blue indicator)
+  - 1 opportunity: 1 day overdue (for demo completion workflow)
+  - 1 opportunity: 3 days in future (should not appear on dashboard)
+  - Total: 5-6 opportunities, 4 visible on dashboard
 - **Test Fixtures**: Reusable test data for consistent testing
 - **Database Cleanup**: Automated cleanup between test runs
 
@@ -249,6 +271,118 @@ logger.info(
 - **Current Limitation**: No pagination on /due endpoint
 - **Mitigation Strategy**: Cursor-based pagination for >1000 opportunities
 - **Monitoring**: Track P95 latency on critical endpoints
+
+## Demo Enhancement Features
+
+### Visual Urgency Indicators
+
+**Implementation Approach**:
+```typescript
+// Utility function in DueActionCard.tsx
+function getUrgencyColor(nextActionAt: string): string {
+  const actionDate = new Date(nextActionAt);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  actionDate.setHours(0, 0, 0, 0);
+  
+  const daysOverdue = Math.floor((today.getTime() - actionDate.getTime()) / (1000 * 60 * 60 * 24));
+  
+  if (daysOverdue > 3) return '#ef4444'; // red - high urgency
+  if (daysOverdue >= 1) return '#eab308'; // yellow - medium urgency
+  return '#3b82f6'; // blue - due today
+}
+```
+
+**CSS Application**:
+```css
+.due-action-card {
+  border-left: 4px solid var(--urgency-color);
+}
+```
+
+### Quick-Select Date Buttons
+
+**Implementation Approach**:
+```typescript
+// In CompleteActionModal.tsx
+function handleQuickSelect(interval: 'week' | '2weeks' | 'month') {
+  const today = new Date();
+  let futureDate: Date;
+  
+  switch (interval) {
+    case 'week':
+      futureDate = new Date(today.setDate(today.getDate() + 7));
+      break;
+    case '2weeks':
+      futureDate = new Date(today.setDate(today.getDate() + 14));
+      break;
+    case 'month':
+      futureDate = new Date(today.setMonth(today.getMonth() + 1));
+      break;
+  }
+  
+  setNewNextActionAt(futureDate);
+}
+```
+
+**Date Validation**:
+```typescript
+// Validation function
+function validateFutureDate(date: Date): boolean {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  date.setHours(0, 0, 0, 0);
+  return date >= today;
+}
+```
+
+### Enhanced Seed Data
+
+**Seed Script Structure**:
+```python
+# backend/app/database/seed.py
+from datetime import datetime, timedelta
+
+def create_demo_opportunities(tenant_id: UUID):
+    opportunities = [
+        {
+            "name": "Enterprise Deal - Acme Corp",
+            "value": 50000,
+            "stage": "Proposal",
+            "next_action_at": datetime.now() - timedelta(days=7),  # High urgency
+            "next_action_details": "Follow up on proposal feedback"
+        },
+        {
+            "name": "Mid-Market - TechStart Inc",
+            "value": 25000,
+            "stage": "Negotiation",
+            "next_action_at": datetime.now() - timedelta(days=2),  # Medium urgency
+            "next_action_details": "Send revised pricing"
+        },
+        {
+            "name": "SMB Deal - Local Business",
+            "value": 5000,
+            "stage": "Discovery",
+            "next_action_at": datetime.now(),  # Due today
+            "next_action_details": "Schedule demo call"
+        },
+        {
+            "name": "Renewal - Existing Customer",
+            "value": 15000,
+            "stage": "Closed Won",
+            "next_action_at": datetime.now() - timedelta(days=1),  # For demo flow
+            "next_action_details": "Send renewal contract"
+        },
+        {
+            "name": "Future Opportunity",
+            "value": 30000,
+            "stage": "Qualification",
+            "next_action_at": datetime.now() + timedelta(days=3),  # Future (not shown)
+            "next_action_details": "Initial discovery call"
+        }
+    ]
+    return opportunities
+```
 
 ## Deployment Architecture
 

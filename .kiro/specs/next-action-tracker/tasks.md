@@ -143,9 +143,9 @@
     - Set up test data fixtures and cleanup procedures
     - _Requirements: 1.1, 1.2, 1.3, 2.1, 2.2, 2.3, 2.4, 2.5_
 
-- [ ] 7. Final integration and testing
+- [x] 7. Final integration and testing
 
-  - [ ] 7.1 End-to-end workflow testing
+  - [x] 7.1 End-to-end workflow testing
 
     - Test complete user journey from dashboard to action completion
     - Verify tenant isolation works correctly across all components
@@ -153,9 +153,61 @@
     - Validate performance with seed data
     - _Requirements: 1.1, 1.2, 1.3, 1.5, 2.1, 2.2, 2.3, 2.4, 2.5, 4.1, 4.2, 4.3, 4.4, 4.5_
 
-  - [ ] 7.2 Performance optimization and final polish
+  - [x] 7.2 Performance optimization and final polish
     - Optimize database queries and add monitoring
     - Implement React Query caching strategies
     - Add final UI polish and responsive design
     - Create production-ready build configuration
     - _Requirements: 5.1, 5.5_
+
+- [x] 8. Enhance demo with visual prioritization and improved UX
+
+  - [x] 8.1 Update seed script with compelling demo dataset
+
+    - Modify backend/app/database/seed.py to create 5-6 opportunities with varied urgency
+    - Create 1 opportunity 7 days overdue (high urgency scenario)
+    - Create 1 opportunity 2 days overdue (medium urgency scenario)
+    - Create 1 opportunity due today (low urgency scenario)
+    - Create 1 opportunity 1 day overdue (for demo completion workflow)
+    - Create 1 opportunity 3 days in future (should not appear on dashboard)
+    - Use realistic opportunity names, values, and stages for demo impact
+    - Commit changes with descriptive message
+    - _Requirements: 9.1, 9.2, 9.3, 9.4, 9.5, 9.6, 9.7, 6.1, 6.2_
+
+  - [x] 8.2 Implement visual urgency indicators in DueActionCard
+
+    - Create getUrgencyColor utility function that calculates days overdue
+    - Implement color logic: red (>3 days), yellow (1-3 days), blue (today)
+    - Add colored left border (4px) to card component using calculated color
+    - Ensure next_action_at prop is passed to card component
+    - Test urgency calculation with different date scenarios
+    - Commit changes with descriptive message
+    - _Requirements: 7.1, 7.2, 7.3, 7.4, 7.5, 6.1, 6.2_
+
+  - [x] 8.3 Add quick-select buttons to CompleteActionModal
+
+    - Create three buttons: "+1 Week", "+2 Weeks", "+1 Month" below DatePicker
+    - Implement handleQuickSelect function with date calculation logic
+    - Wire button clicks to automatically populate DatePicker field
+    - Style buttons for clear visual hierarchy and usability
+    - Commit changes with descriptive message
+    - _Requirements: 8.1, 8.2, 8.5, 6.1, 6.2_
+
+  - [x] 8.4 Implement date validation in CompleteActionModal
+
+    - Add min date constraint to DatePicker (set to today)
+    - Implement client-side validation to prevent past date selection
+    - Add form validation before submission: new_next_action_at >= today
+    - Display error message: "Next action date must be today or in the future"
+    - Test validation with various date inputs including edge cases
+    - Commit changes with descriptive message
+    - _Requirements: 8.3, 8.4, 6.1, 6.2_
+
+  - [ ]\* 8.5 Test enhanced demo features end-to-end
+    - Verify seed script creates correct opportunities with varied dates
+    - Confirm dashboard displays only 4 due/overdue items (not future item)
+    - Validate urgency colors appear correctly (red, yellow, blue)
+    - Test quick-select buttons populate dates correctly
+    - Verify past date validation prevents invalid submissions
+    - Test complete workflow: select overdue item, use quick-select, complete action
+    - _Requirements: 7.1, 7.2, 7.3, 7.4, 7.5, 8.1, 8.2, 8.3, 8.4, 8.5, 9.1, 9.2, 9.3, 9.4, 9.5, 9.6, 9.7_

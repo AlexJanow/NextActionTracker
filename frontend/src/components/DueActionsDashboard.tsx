@@ -17,25 +17,35 @@ const DueActionsDashboard: React.FC = () => {
     isLoading,
     error,
     refetch,
-  } = useQuery({
+    isFetching,
+  } = useQuery<Opportunity[], ApiError>({
     queryKey: ['dueOpportunities'],
     queryFn: opportunitiesApi.getDueOpportunities,
+    
+    // Optimized caching strategy
+    staleTime: 1 * 60 * 1000, // 1 minute - data is fresh for 1 minute
+    gcTime: 5 * 60 * 1000, // 5 minutes - keep in cache
+    
+    // Refetch strategies for real-time updates
+    refetchOnWindowFocus: true, // Refetch when user returns
+    refetchOnReconnect: true, // Refetch when network reconnects
+    refetchInterval: 5 * 60 * 1000, // Auto-refetch every 5 minutes
+    
+    // Error handling
     retry: (failureCount, error) => {
-      const apiError = error as ApiError;
       // Don't retry on client errors (4xx), only on server errors and network issues
-      if (apiError.status >= 400 && apiError.status < 500) {
+      if (error && 'status' in error && error.status >= 400 && error.status < 500) {
         return false;
       }
-      return failureCount < 3;
+      return failureCount < 2; // Reduced retries for faster failure
     },
-    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
+    retryDelay: (attemptIndex) => Math.min(500 * 2 ** attemptIndex, 5000), // Faster retry
   });
 
   // Show error toast when query fails
   useEffect(() => {
     if (error) {
-      const apiError = error as ApiError;
-      showError(apiError.message || 'Failed to load due actions');
+      showError(error.message || 'Failed to load due actions');
     }
   }, [error, showError]);
 
@@ -51,11 +61,12 @@ const DueActionsDashboard: React.FC = () => {
 
   const handleActionCompleted = () => {
     showSuccess('Action completed successfully!');
+    // Optimized refetch - invalidate and refetch immediately
     refetch();
     handleModalClose();
   };
 
-  if (isLoading) {
+  if (isLoading && !opportunities.length) {
     return (
       <div>
         <h2 className="mb-20">Due Actions</h2>
@@ -97,7 +108,10 @@ const DueActionsDashboard: React.FC = () => {
   return (
     <ErrorBoundary>
       <div>
-        <h2 className="mb-20">Due Actions ({opportunities.length})</h2>
+        <h2 className="mb-20">
+          Due Actions ({opportunities.length})
+          {isFetching && <span className="loading-indicator"> ↻</span>}
+        </h2>
         
         <div>
           {opportunities.map((opportunity) => (

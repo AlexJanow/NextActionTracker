@@ -108,6 +108,34 @@ async def health_check():
     return {"status": "healthy", "service": "next-action-tracker-api"}
 
 
+@app.get("/metrics")
+async def get_metrics():
+    """Get application metrics for monitoring"""
+    try:
+        from app.database.connection import get_pool_stats
+        pool_stats = await get_pool_stats()
+        return {
+            "status": "healthy",
+            "database": {
+                "pool_size": pool_stats["size"],
+                "pool_idle": pool_stats["idle"],
+                "pool_max": pool_stats["max_size"],
+                "pool_min": pool_stats["min_size"]
+            },
+            "service": "next-action-tracker-api",
+            "version": "1.0.0"
+        }
+    except Exception as e:
+        logger = structlog.get_logger()
+        logger.error("Metrics endpoint error", error=str(e))
+        return {
+            "status": "degraded",
+            "error": str(e),
+            "service": "next-action-tracker-api",
+            "version": "1.0.0"
+        }
+
+
 @app.get("/")
 async def root():
     """Root endpoint"""

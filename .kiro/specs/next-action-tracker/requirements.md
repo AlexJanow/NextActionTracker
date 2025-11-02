@@ -84,3 +84,41 @@ The Next Action Tracker (NAT) is a focused dashboard feature for Sales CRM/ERP s
 2. THE development process SHALL include descriptive commit messages that explain the changes made
 3. THE development process SHALL commit code at logical breakpoints during implementation
 4. THE development process SHALL maintain a clean Git history for code review and debugging purposes
+
+### Requirement 7
+
+**User Story:** As a Sales Rep, I want to visually distinguish between different urgency levels of due actions, so that I can quickly identify which deals need immediate attention.
+
+#### Acceptance Criteria
+
+1. WHEN a due action is more than 3 days overdue, THE NAT SHALL display a red visual indicator (#ef4444)
+2. WHEN a due action is 1-3 days overdue, THE NAT SHALL display a yellow visual indicator (#eab308)
+3. WHEN a due action is due today, THE NAT SHALL display a blue or gray visual indicator (#3b82f6)
+4. THE NAT SHALL calculate urgency by comparing next_action_at to the current date
+5. THE NAT SHALL apply the visual indicator consistently to all due action cards
+
+### Requirement 8
+
+**User Story:** As a Sales Rep, I want to quickly schedule follow-up actions using preset time intervals, so that I can complete actions faster without manual date calculation.
+
+#### Acceptance Criteria
+
+1. WHEN completing an action, THE NAT SHALL display quick-select buttons for "+1 Week", "+2 Weeks", and "+1 Month"
+2. WHEN a quick-select button is clicked, THE NAT SHALL automatically set the date picker to the corresponding future date from today
+3. THE NAT SHALL prevent selection of past dates in the date picker
+4. THE NAT SHALL validate that new_next_action_at is not in the past before allowing form submission
+5. THE NAT SHALL calculate future dates accurately accounting for month boundaries and leap years
+
+### Requirement 9
+
+**User Story:** As a product manager, I want the demo to showcase realistic pipeline scenarios with varied urgency levels, so that potential customers can understand the value proposition immediately.
+
+#### Acceptance Criteria
+
+1. THE seed script SHALL create 5-6 opportunities for a single demo tenant
+2. THE seed script SHALL create 1 opportunity with next_action_at 5-7 days in the past (high urgency)
+3. THE seed script SHALL create 1 opportunity with next_action_at 2 days in the past (medium urgency)
+4. THE seed script SHALL create 1 opportunity with next_action_at set to today (low urgency)
+5. THE seed script SHALL create 1 opportunity with next_action_at 1 day in the past (for demo completion flow)
+6. THE seed script SHALL create 1 opportunity with next_action_at 3 days in the future (should not appear on dashboard)
+7. WHEN the dashboard loads, THE NAT SHALL display only the 4 overdue/due items, excluding future actions
