@@ -1,5 +1,6 @@
 import React from 'react';
 import { format, parseISO, isToday, isPast } from 'date-fns';
+import { de } from 'date-fns/locale';
 import { Opportunity } from '../services/api';
 
 interface DueActionCardProps {
@@ -12,10 +13,10 @@ const DueActionCard: React.FC<DueActionCardProps> = ({
   onCompleteAction 
 }) => {
   const formatCurrency = (value: number | null): string => {
-    if (value === null) return 'No value set';
-    return new Intl.NumberFormat('en-US', {
+    if (value === null) return 'Kein Wert festgelegt';
+    return new Intl.NumberFormat('de-DE', {
       style: 'currency',
-      currency: 'USD',
+      currency: 'EUR',
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
     }).format(value);
@@ -41,15 +42,15 @@ const DueActionCard: React.FC<DueActionCardProps> = ({
     const isOverdue = isPast(date) && !isToday(date);
     
     if (isToday(date)) {
-      return { text: 'Due today', isOverdue: false };
+      return { text: 'Heute fällig', isOverdue: false };
     } else if (isOverdue) {
       const daysOverdue = Math.floor((Date.now() - date.getTime()) / (1000 * 60 * 60 * 24));
       return { 
-        text: `${daysOverdue} day${daysOverdue === 1 ? '' : 's'} overdue`, 
+        text: `${daysOverdue} ${daysOverdue === 1 ? 'Tag' : 'Tage'} überfällig`, 
         isOverdue: true 
       };
     } else {
-      return { text: format(date, 'MMM d, yyyy'), isOverdue: false };
+      return { text: format(date, 'd. MMM yyyy', { locale: de }), isOverdue: false };
     }
   };
 
@@ -67,7 +68,7 @@ const DueActionCard: React.FC<DueActionCardProps> = ({
             </h3>
             {dueInfo.isOverdue && (
               <span className="overdue-badge">
-                OVERDUE
+                ÜBERFÄLLIG
               </span>
             )}
           </div>
@@ -75,13 +76,13 @@ const DueActionCard: React.FC<DueActionCardProps> = ({
           {/* Opportunity details */}
           <div className="flex gap-10" style={{ marginBottom: '12px' }}>
             <div>
-              <span className="action-label">Value: </span>
+              <span className="action-label">Wert: </span>
               <span className="action-value">
                 {formatCurrency(opportunity.value)}
               </span>
             </div>
             <div>
-              <span className="action-label">Stage: </span>
+              <span className="action-label">Phase: </span>
               <span className="action-value">
                 {opportunity.stage}
               </span>
@@ -90,7 +91,7 @@ const DueActionCard: React.FC<DueActionCardProps> = ({
 
           {/* Due date */}
           <div style={{ marginBottom: '12px' }}>
-            <span className="action-label">Due: </span>
+            <span className="action-label">Fällig: </span>
             <span className={dueInfo.isOverdue ? 'action-due-overdue' : 'action-due-normal'}>
               {dueInfo.text}
             </span>
@@ -98,9 +99,9 @@ const DueActionCard: React.FC<DueActionCardProps> = ({
 
           {/* Next action details */}
           <div>
-            <span className="action-label">Next Action: </span>
+            <span className="action-label">Nächste Aktion: </span>
             <span className="action-value">
-              {opportunity.next_action_details || 'No details provided'}
+              {opportunity.next_action_details || 'Keine Details angegeben'}
             </span>
           </div>
         </div>
@@ -111,7 +112,7 @@ const DueActionCard: React.FC<DueActionCardProps> = ({
           onClick={() => onCompleteAction(opportunity)}
           style={{ marginLeft: '20px' }}
         >
-          Complete Action
+          Aktion abschließen
         </button>
       </div>
     </div>

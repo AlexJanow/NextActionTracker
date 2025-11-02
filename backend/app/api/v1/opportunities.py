@@ -20,7 +20,7 @@ logger = structlog.get_logger(__name__)
 async def get_tenant_id(request: Request) -> UUID:
     """Extract tenant ID from request state (set by middleware)."""
     if not hasattr(request.state, 'tenant_id'):
-        raise HTTPException(status_code=400, detail="Tenant ID not found in request")
+        raise HTTPException(status_code=400, detail="Mandanten-ID nicht in der Anfrage gefunden")
     return request.state.tenant_id
 
 
@@ -99,7 +99,7 @@ async def get_due_opportunities(
             )
             raise HTTPException(
                 status_code=500,
-                detail="Failed to retrieve due opportunities"
+                detail="Fällige Aktionen konnten nicht abgerufen werden"
             )
 
 
@@ -159,7 +159,7 @@ async def complete_action(
                     )
                     raise HTTPException(
                         status_code=404,
-                        detail="Opportunity not found"
+                        detail="Opportunity nicht gefunden"
                     )
                 
                 transaction_duration = time.time() - transaction_start
@@ -186,7 +186,7 @@ async def complete_action(
                 
                 return BaseResponse(
                     success=True,
-                    message="Action completed and next action scheduled successfully"
+                    message="Aktion abgeschlossen und nächste Aktion erfolgreich geplant"
                 )
                 
         except HTTPException:
@@ -203,5 +203,5 @@ async def complete_action(
             )
             raise HTTPException(
                 status_code=500,
-                detail="Failed to complete action"
+                detail="Aktion konnte nicht abgeschlossen werden"
             )

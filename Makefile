@@ -43,7 +43,7 @@ logs:
 	docker-compose logs -f
 
 seed:
-	docker-compose exec backend python -m app.database.seed
+	docker-compose exec backend python seed_db.py
 
 clean:
 	docker-compose down -v --remove-orphans

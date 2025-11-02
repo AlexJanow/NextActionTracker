@@ -20,7 +20,7 @@ logger = structlog.get_logger(__name__)
 async def get_tenant_id(request: Request) -> UUID:
     """Extract tenant ID from request state (set by middleware)."""
     if not hasattr(request.state, 'tenant_id'):
-        raise HTTPException(status_code=400, detail="Tenant ID not found in request")
+        raise HTTPException(status_code=400, detail="Mandanten-ID nicht in der Anfrage gefunden")
     return request.state.tenant_id
 
 
@@ -67,7 +67,7 @@ async def reset_demo_data(
                 
                 return BaseResponse(
                     success=True,
-                    message=f"Demo data reset successfully. {len(opportunities)} opportunities created."
+                    message=f"Demo-Daten erfolgreich zurückgesetzt. {len(opportunities)} Opportunities erstellt."
                 )
                 
         except Exception as e:
@@ -80,6 +80,6 @@ async def reset_demo_data(
             )
             raise HTTPException(
                 status_code=500,
-                detail="Failed to reset demo data"
+                detail="Demo-Daten konnten nicht zurückgesetzt werden"
             )
 

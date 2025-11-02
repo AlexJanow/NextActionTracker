@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import DatePicker from 'react-datepicker';
+import { de } from 'date-fns/locale';
 
 import { opportunitiesApi, Opportunity, CompleteActionRequest, ApiError } from '../services/api';
 import { useToast } from '../contexts/ToastContext';
@@ -65,11 +66,11 @@ const CompleteActionModal: React.FC<CompleteActionModalProps> = ({
       
       // Show specific error message based on error type
       if (error.status === 422) {
-        showError('Please check your input and try again');
+        showError('Bitte überprüfen Sie Ihre Eingaben und versuchen Sie es erneut');
       } else if (error.status === 404) {
-        showError('This opportunity could not be found');
+        showError('Diese Opportunity konnte nicht gefunden werden');
       } else {
-        showError(error.message || 'Failed to complete action. Please try again.');
+        showError(error.message || 'Aktion konnte nicht abgeschlossen werden. Bitte versuchen Sie es erneut.');
       }
     },
   });
@@ -78,7 +79,7 @@ const CompleteActionModal: React.FC<CompleteActionModalProps> = ({
     const newErrors: { date?: string; details?: string } = {};
 
     if (!newActionDate) {
-      newErrors.date = 'Please select a date for the next action';
+      newErrors.date = 'Bitte wählen Sie ein Datum für die nächste Aktion';
     } else {
       // Validate that the date is today or in the future
       const today = new Date();
@@ -87,14 +88,14 @@ const CompleteActionModal: React.FC<CompleteActionModalProps> = ({
       selectedDate.setHours(0, 0, 0, 0);
       
       if (selectedDate < today) {
-        newErrors.date = 'Next action date must be today or in the future';
+        newErrors.date = 'Das Datum der nächsten Aktion muss heute oder in der Zukunft liegen';
       }
     }
 
     if (!newActionDetails.trim()) {
-      newErrors.details = 'Please describe the next action';
+      newErrors.details = 'Bitte beschreiben Sie die nächste Aktion';
     } else if (newActionDetails.trim().length < 5) {
-      newErrors.details = 'Action description must be at least 5 characters';
+      newErrors.details = 'Die Aktionsbeschreibung muss mindestens 5 Zeichen lang sein';
     }
 
     setErrors(newErrors);
@@ -127,25 +128,25 @@ const CompleteActionModal: React.FC<CompleteActionModalProps> = ({
   return (
     <div className="modal-overlay" onClick={handleOverlayClick}>
       <div className="modal">
-        <h2>Complete Action</h2>
+        <h2>Aktion abschließen</h2>
         
         <div className="modal-opportunity-info">
           <h4 className="modal-opportunity-name">{opportunity.name}</h4>
           <p className="modal-opportunity-details">
-            Current action: {opportunity.next_action_details || 'No details'}
+            Aktuelle Aktion: {opportunity.next_action_details || 'Keine Details'}
           </p>
         </div>
 
         {mutation.error && (
           <div className="error" style={{ marginBottom: '20px' }}>
-            <p>Failed to complete action. Please try again.</p>
+            <p>Aktion konnte nicht abgeschlossen werden. Bitte versuchen Sie es erneut.</p>
           </div>
         )}
 
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label htmlFor="nextActionDate">
-              When should the next action be completed? *
+              Wann soll die nächste Aktion abgeschlossen werden? *
             </label>
             <DatePicker
               id="nextActionDate"
@@ -155,9 +156,10 @@ const CompleteActionModal: React.FC<CompleteActionModalProps> = ({
                 setTouched(prev => ({ ...prev, date: true }));
               }}
               onBlur={() => setTouched(prev => ({ ...prev, date: true }))}
-              dateFormat="MMMM d, yyyy"
+              dateFormat="d. MMMM yyyy"
               minDate={new Date()}
-              placeholderText="Select a date"
+              placeholderText="Datum auswählen"
+              locale={de}
               className={errors.date && touched.date ? 'field-error' : ''}
             />
             
@@ -173,7 +175,7 @@ const CompleteActionModal: React.FC<CompleteActionModalProps> = ({
                 className="btn quick-select-button"
                 disabled={mutation.isPending}
               >
-                +1 Week
+                +1 Woche
               </button>
               <button
                 type="button"
@@ -181,7 +183,7 @@ const CompleteActionModal: React.FC<CompleteActionModalProps> = ({
                 className="btn quick-select-button"
                 disabled={mutation.isPending}
               >
-                +2 Weeks
+                +2 Wochen
               </button>
               <button
                 type="button"
@@ -189,7 +191,7 @@ const CompleteActionModal: React.FC<CompleteActionModalProps> = ({
                 className="btn quick-select-button"
                 disabled={mutation.isPending}
               >
-                +1 Month
+                +1 Monat
               </button>
             </div>
             
@@ -198,7 +200,7 @@ const CompleteActionModal: React.FC<CompleteActionModalProps> = ({
 
           <div className="form-group">
             <label htmlFor="nextActionDetails">
-              What is the next action to take? *
+              Was ist die nächste Aktion? *
             </label>
             <textarea
               id="nextActionDetails"
@@ -208,7 +210,7 @@ const CompleteActionModal: React.FC<CompleteActionModalProps> = ({
                 setTouched(prev => ({ ...prev, details: true }));
               }}
               onBlur={() => setTouched(prev => ({ ...prev, details: true }))}
-              placeholder="e.g., Send customized proposal, Schedule demo call, Follow up on pricing questions..."
+              placeholder="z.B. Individuelles Angebot versenden, Demo-Call vereinbaren, Preisfragen klären..."
               className={errors.details && touched.details ? 'field-error' : ''}
             />
             <FieldError error={errors.details} touched={touched.details} />
@@ -221,7 +223,7 @@ const CompleteActionModal: React.FC<CompleteActionModalProps> = ({
               className="btn btn-secondary"
               disabled={mutation.isPending}
             >
-              Cancel
+              Abbrechen
             </button>
             <button
               type="submit"
@@ -239,10 +241,10 @@ const CompleteActionModal: React.FC<CompleteActionModalProps> = ({
                       borderWidth: '2px' 
                     }}
                   />
-                  Completing...
+                  Wird abgeschlossen...
                 </span>
               ) : (
-                'Complete & Set Next Action'
+                'Abschließen & Nächste Aktion festlegen'
               )}
             </button>
           </div>

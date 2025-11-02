@@ -63,16 +63,16 @@ class ErrorBoundary extends Component<Props, State> {
 
       return (
         <div className="error-boundary">
-          <h2>Oops! Something went wrong</h2>
+          <h2>Hoppla! Da ist etwas schiefgelaufen</h2>
           <p>
-            We encountered an unexpected error. This has been logged and we'll look into it.
-            You can try refreshing the page or going back to continue.
+            Es ist ein unerwarteter Fehler aufgetreten. Dieser wurde protokolliert und wir werden uns darum kümmern.
+            Sie können die Seite aktualisieren oder zurückgehen, um fortzufahren.
           </p>
           
           {process.env.NODE_ENV === 'development' && this.state.error && (
             <details style={{ marginTop: '20px', textAlign: 'left' }}>
               <summary style={{ cursor: 'pointer', marginBottom: '10px' }}>
-                Error Details (Development Only)
+                Fehlerdetails (nur Entwicklungsmodus)
               </summary>
               <pre style={{ 
                 background: '#f8f9fa', 
@@ -93,13 +93,13 @@ class ErrorBoundary extends Component<Props, State> {
               className="btn btn-primary"
               onClick={this.handleRetry}
             >
-              Try Again
+              Erneut versuchen
             </button>
             <button 
               className="btn btn-primary"
               onClick={this.handleRefresh}
             >
-              Refresh Page
+              Seite aktualisieren
             </button>
           </div>
         </div>

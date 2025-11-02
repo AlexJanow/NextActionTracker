@@ -32,11 +32,11 @@ async def seed_tenants(connection: asyncpg.Connection) -> List[Dict[str, Any]]:
     tenants = [
         {
             'id': DEMO_TENANT_ID,
-            'name': 'Demo Company',
+            'name': 'Demo Unternehmen',
         },
         {
             'id': SECOND_TENANT_ID,
-            'name': 'Test Organization',
+            'name': 'Test Organisation',
         }
     ]
     
@@ -61,11 +61,11 @@ async def seed_opportunities(connection: asyncpg.Connection) -> List[Dict[str, A
         {
             'id': uuid4(),
             'tenant_id': DEMO_TENANT_ID,
-            'name': 'Enterprise Deal - Acme Corp',
+            'name': 'Enterprise-Deal - TechVision GmbH',
             'value': 50000,
-            'stage': 'Proposal',
+            'stage': 'Angebot',
             'next_action_at': now - timedelta(days=7),
-            'next_action_details': 'Follow up on proposal feedback',
+            'next_action_details': 'Feedback zum Angebot einholen',
             'last_activity_at': now - timedelta(days=8),
         },
         
@@ -73,11 +73,11 @@ async def seed_opportunities(connection: asyncpg.Connection) -> List[Dict[str, A
         {
             'id': uuid4(),
             'tenant_id': DEMO_TENANT_ID,
-            'name': 'Mid-Market - TechStart Inc',
+            'name': 'Mittelstand - InnoSoft AG',
             'value': 25000,
-            'stage': 'Negotiation',
+            'stage': 'Verhandlung',
             'next_action_at': now - timedelta(days=2),
-            'next_action_details': 'Send revised pricing',
+            'next_action_details': 'Überarbeitetes Preisangebot versenden',
             'last_activity_at': now - timedelta(days=3),
         },
         
@@ -85,11 +85,11 @@ async def seed_opportunities(connection: asyncpg.Connection) -> List[Dict[str, A
         {
             'id': uuid4(),
             'tenant_id': DEMO_TENANT_ID,
-            'name': 'SMB Deal - Local Business',
+            'name': 'KMU-Deal - RegioTech GmbH',
             'value': 5000,
-            'stage': 'Discovery',
+            'stage': 'Qualifizierung',
             'next_action_at': now,
-            'next_action_details': 'Schedule demo call',
+            'next_action_details': 'Demo-Termin vereinbaren',
             'last_activity_at': now - timedelta(hours=6),
         },
         
@@ -97,11 +97,11 @@ async def seed_opportunities(connection: asyncpg.Connection) -> List[Dict[str, A
         {
             'id': uuid4(),
             'tenant_id': DEMO_TENANT_ID,
-            'name': 'Renewal - Existing Customer',
+            'name': 'Verlängerung - Bestandskunde',
             'value': 15000,
-            'stage': 'Closed Won',
+            'stage': 'Gewonnen',
             'next_action_at': now - timedelta(days=1),
-            'next_action_details': 'Send renewal contract',
+            'next_action_details': 'Verlängerungsvertrag versenden',
             'last_activity_at': now - timedelta(days=2),
         },
         
@@ -109,11 +109,11 @@ async def seed_opportunities(connection: asyncpg.Connection) -> List[Dict[str, A
         {
             'id': uuid4(),
             'tenant_id': DEMO_TENANT_ID,
-            'name': 'Future Opportunity',
+            'name': 'Zukünftige Opportunity',
             'value': 30000,
-            'stage': 'Qualification',
+            'stage': 'Qualifizierung',
             'next_action_at': now + timedelta(days=3),
-            'next_action_details': 'Initial discovery call',
+            'next_action_details': 'Erstes Kennenlerngespräch',
             'last_activity_at': now - timedelta(hours=2),
         },
         
@@ -121,11 +121,11 @@ async def seed_opportunities(connection: asyncpg.Connection) -> List[Dict[str, A
         {
             'id': uuid4(),
             'tenant_id': DEMO_TENANT_ID,
-            'name': 'Healthcare Solutions Inc',
+            'name': 'MedTech Solutions GmbH',
             'value': 120000,
-            'stage': 'Negotiation',
+            'stage': 'Verhandlung',
             'next_action_at': now - timedelta(days=5),
-            'next_action_details': 'Review contract terms and prepare counter-proposal',
+            'next_action_details': 'Vertragsbedingungen prüfen und Gegenangebot vorbereiten',
             'last_activity_at': now - timedelta(days=6),
         },
         
@@ -133,11 +133,11 @@ async def seed_opportunities(connection: asyncpg.Connection) -> List[Dict[str, A
         {
             'id': uuid4(),
             'tenant_id': SECOND_TENANT_ID,
-            'name': 'Different Tenant Deal',
+            'name': 'Anderer Mandanten-Deal',
             'value': 40000,
-            'stage': 'Discovery',
+            'stage': 'Qualifizierung',
             'next_action_at': now - timedelta(hours=2),
-            'next_action_details': 'This should not appear for Demo Company tenant',
+            'next_action_details': 'Sollte nicht für Demo Unternehmen Mandant erscheinen',
             'last_activity_at': now - timedelta(hours=3),
         },
     ]

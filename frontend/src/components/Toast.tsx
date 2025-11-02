@@ -47,7 +47,7 @@ const Toast: React.FC<ToastProps> = ({ toast }) => {
         <button 
           className="toast-close"
           onClick={() => removeToast(toast.id)}
-          aria-label="Close notification"
+          aria-label="Benachrichtigung schließen"
         >
           ×
         </button>

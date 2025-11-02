@@ -17,12 +17,12 @@ const DemoControlPanel: React.FC<DemoControlPanelProps> = () => {
     onSuccess: () => {
       // Invalidate and refetch all queries
       queryClient.invalidateQueries({ queryKey: ['dueOpportunities'] });
-      showSuccess('Demo data reset successfully!');
+      showSuccess('Demo-Daten erfolgreich zurückgesetzt!');
       setShowResetModal(false);
     },
     onError: (error: ApiError) => {
       console.error('Failed to reset demo data:', error);
-      showError(error.message || 'Failed to reset demo data. Please try again.');
+      showError(error.message || 'Demo-Daten konnten nicht zurückgesetzt werden. Bitte versuchen Sie es erneut.');
     },
   });
 
@@ -50,19 +50,19 @@ const DemoControlPanel: React.FC<DemoControlPanelProps> = () => {
       {showResetModal && (
         <div className="modal-overlay" onClick={handleCancel}>
           <div className="modal" onClick={(e) => e.stopPropagation()}>
-            <h2>Reset Demo Data</h2>
+            <h2>Demo-Daten zurücksetzen</h2>
             
             <div className="modal-content">
-              <p>This will reset all demo data to its initial state.</p>
+              <p>Dies setzt alle Demo-Daten auf den Ausgangszustand zurück.</p>
               <p className="modal-warning">
-                <strong>Warning:</strong> All current opportunities and actions will be replaced with fresh demo data.
+                <strong>Warnung:</strong> Alle aktuellen Opportunities und Aktionen werden durch neue Demo-Daten ersetzt.
               </p>
-              <p>Are you sure you want to proceed?</p>
+              <p>Möchten Sie wirklich fortfahren?</p>
             </div>
 
             {mutation.error && (
               <div className="error" style={{ marginBottom: '20px' }}>
-                <p>Failed to reset demo data. Please try again.</p>
+                <p>Demo-Daten konnten nicht zurückgesetzt werden. Bitte versuchen Sie es erneut.</p>
               </div>
             )}
 
@@ -73,7 +73,7 @@ const DemoControlPanel: React.FC<DemoControlPanelProps> = () => {
                 className="btn btn-secondary"
                 disabled={mutation.isPending}
               >
-                Cancel
+                Abbrechen
               </button>
               <button
                 type="button"
@@ -92,10 +92,10 @@ const DemoControlPanel: React.FC<DemoControlPanelProps> = () => {
                         borderWidth: '2px' 
                       }}
                     />
-                    Resetting...
+                    Wird zurückgesetzt...
                   </span>
                 ) : (
-                  'Reset Demo Data'
+                  'Demo-Daten zurücksetzen'
                 )}
               </button>
             </div>

@@ -21,8 +21,8 @@ const App: React.FC = () => {
                 <div className="container">
                   <header className="header">
                     <div>
-                      <h1>Next Action Tracker</h1>
-                      <p>Stay on top of your sales pipeline - never let a deal go cold</p>
+                      <h1>Nächste Aktionen</h1>
+                      <p>Behalten Sie Ihre Sales-Pipeline im Blick – kein Deal bleibt liegen</p>
                     </div>
                     <ThemeToggle />
                   </header>

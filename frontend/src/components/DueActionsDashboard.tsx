@@ -46,7 +46,7 @@ const DueActionsDashboard: React.FC = () => {
   // Show error toast when query fails
   useEffect(() => {
     if (error) {
-      showError(error.message || 'Failed to load due actions');
+      showError(error.message || 'Fällige Aktionen konnten nicht geladen werden');
     }
   }, [error, showError]);
 
@@ -61,7 +61,7 @@ const DueActionsDashboard: React.FC = () => {
   };
 
   const handleActionCompleted = () => {
-    showSuccess('Action completed successfully!');
+    showSuccess('Aktion erfolgreich abgeschlossen!');
     // Optimized refetch - invalidate and refetch immediately
     refetch();
     handleModalClose();
@@ -70,7 +70,7 @@ const DueActionsDashboard: React.FC = () => {
   if (isLoading && !opportunities.length) {
     return (
       <div>
-        <h2 className="mb-20">Due Actions</h2>
+        <h2 className="mb-20">Fällige Aktionen</h2>
         <LoadingSkeleton />
       </div>
     );
@@ -79,15 +79,15 @@ const DueActionsDashboard: React.FC = () => {
   if (error) {
     return (
       <div>
-        <h2 className="mb-20">Due Actions</h2>
+        <h2 className="mb-20">Fällige Aktionen</h2>
         <div className="error">
-          <p>Failed to load due actions. Please try again.</p>
+          <p>Fällige Aktionen konnten nicht geladen werden. Bitte versuchen Sie es erneut.</p>
           <button 
             className="btn btn-primary" 
             onClick={() => refetch()}
             style={{ marginTop: '10px' }}
           >
-            Retry
+            Erneut versuchen
           </button>
         </div>
       </div>
@@ -97,10 +97,10 @@ const DueActionsDashboard: React.FC = () => {
   if (opportunities.length === 0) {
     return (
       <div>
-        <h2 className="mb-20">Due Actions</h2>
+        <h2 className="mb-20">Fällige Aktionen</h2>
         <div className="empty-state">
-          <h2>All done! 🎉</h2>
-          <p>You have no actions due today. Great work staying on top of your pipeline!</p>
+          <h2>Alles erledigt! 🎉</h2>
+          <p>Sie haben heute keine fälligen Aktionen. Weiter so!</p>
         </div>
       </div>
     );
@@ -110,7 +110,7 @@ const DueActionsDashboard: React.FC = () => {
     <ErrorBoundary>
       <div>
         <h2 className="mb-20">
-          Due Actions ({opportunities.length})
+          Fällige Aktionen ({opportunities.length})
           {isFetching && <span className="loading-indicator"> ↻</span>}
         </h2>
         
