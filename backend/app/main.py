@@ -20,16 +20,23 @@ async def lifespan(app: FastAPI):
     logger = structlog.get_logger()
     logger.info("Starting Next Action Tracker API")
     
-    # Initialize database pool
-    await get_database_pool()
-    logger.info("Database connection pool initialized")
+    # Initialize database pool (non-blocking - allow app to start even if DB fails)
+    try:
+        await get_database_pool()
+        logger.info("Database connection pool initialized")
+    except Exception as e:
+        logger.error("Failed to initialize database pool", error=str(e))
+        logger.warning("Application will start but database operations will fail")
     
     yield
     
     # Shutdown
     logger.info("Shutting down Next Action Tracker API")
-    await close_database_pool()
-    logger.info("Database connection pool closed")
+    try:
+        await close_database_pool()
+        logger.info("Database connection pool closed")
+    except Exception as e:
+        logger.error("Error closing database pool", error=str(e))
 
 
 app = FastAPI(
